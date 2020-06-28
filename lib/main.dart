@@ -1,6 +1,7 @@
 //import 'package:akrams_app/pages/home_page.dart';
 import 'package:akrams_app/pages/home_page.dart';
-import 'package:akrams_app/pages/home_page_with_fb.dart';
+import 'package:akrams_app/pages/home_page_sb.dart';
+//import 'package:akrams_app/pages/home_page_with_fb.dart';
 import 'package:akrams_app/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Constants.prefs.getBool("loggedIn") == true 
-      ? HomePageFB() 
+      ? HomePageSB() 
       : LoginPage(),
       theme: ThemeData(
         primarySwatch: Colors.teal,

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-class HomePageFB extends StatelessWidget {
+class HomePageSB extends StatelessWidget {
 
   /* var myText = "Change My Name";
   TextEditingController _nameController = TextEditingController(); */
@@ -22,6 +22,12 @@ class HomePageFB extends StatelessWidget {
     return data;
   }
 
+  Stream <List<String>> getStream(){
+    var data = Stream <List<String>>.fromIterable([
+      List<String>.generate(20, (index) => "Item $index")
+    ]);
+    return data;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +45,8 @@ class HomePageFB extends StatelessWidget {
           )
         ],
       ),
-      body: FutureBuilder(
-        future: fetchData(),
+      body: StreamBuilder(
+        stream: getStream(),
         // ignore: missing_return
         builder: (context, snapshot){
           switch(snapshot.connectionState){
@@ -63,9 +69,8 @@ class HomePageFB extends StatelessWidget {
                 ListView.builder(
                 itemBuilder: (context, index){
                  return ListTile(
-                  title: Text(snapshot.data[index]["title"]),
-                  subtitle: Text("ID\: ${snapshot.data[index]["id"]}"),
-                  leading: Image.network(snapshot.data[index]["url"]),
+                  title: Text(snapshot.data[index]),
+                  
                   );
                 }, 
               itemCount: snapshot.data.length,);
