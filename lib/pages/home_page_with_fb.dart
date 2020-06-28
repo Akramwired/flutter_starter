@@ -8,37 +8,20 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-class HomePageFB extends StatefulWidget {
-  static const String routeName = "/homefb";
-  @override
-  _HomePageFBState createState() => _HomePageFBState();
-}
-
-class _HomePageFBState extends State<HomePageFB> {
+class HomePageFB extends StatelessWidget {
 
   /* var myText = "Change My Name";
   TextEditingController _nameController = TextEditingController(); */
 
-  var url = "https://jsonplaceholder.typicode.com/photos";
-  var data;
-
-  @override
-  void initState() { 
-    super.initState();
-    fetchData();
-  }
-
   fetchData() async{
+
+    var url = "https://jsonplaceholder.typicode.com/photos";
+
     var res = await http.get(url);
-    data = jsonDecode(res.body);
-    setState(() {});
+    var data = jsonDecode(res.body);
+    return data;
   }
 
-  @override
-  void dispose() { 
-    
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +39,39 @@ class _HomePageFBState extends State<HomePageFB> {
           )
         ],
       ),
-      body: data != null 
-      ? ListView.builder(
-        itemBuilder: (context, index){
-          return ListTile(
-            title: Text(data[index]["title"]),
-            subtitle: Text("ID\: ${data[index]["id"]}"),
-            leading: Image.network(data[index]["url"]),
-          );
-        }, 
-        itemCount: data.length,)
-      : Center(
-        child: CircularProgressIndicator(),)
-        ,
+      body: FutureBuilder(
+        future: fetchData(),
+        builder: (context, snapshot){
+          switch(snapshot.connectionState){
+            case ConnectionState.none:
+              return Center(
+                child: Text("We need to fetch something"),
+            );
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(
+                child: CircularProgressIndicator(),
+            );
+            case ConnectionState.done:
+              if (snapshot.error){
+                return Center(
+                child: Text("Some error has occured"),
+                );
+              }
+              else {
+                ListView.builder(
+                itemBuilder: (context, index){
+                 return ListTile(
+                  title: Text(snapshot.data[index]["title"]),
+                  subtitle: Text("ID\: ${snapshot.data[index]["id"]}"),
+                  leading: Image.network(snapshot.data[index]["url"]),
+                  );
+                }, 
+              itemCount: snapshot.data.length,);
+              }
+          }
+        },
+        ),
       drawer: MyDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
